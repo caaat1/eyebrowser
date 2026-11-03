@@ -3,42 +3,91 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>eyeBrowser</title>
+<title>eyeBrowser logo</title>
 <link rel="icon" href="assets/logo-light.svg" type="image/svg+xml">
 <style>
-  :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #101828; background: #fff; line-height: 1.5; }
-  main { max-width: 960px; margin: 0 auto; padding: 48px 20px 64px; }
-  h1 { margin: 0 0 8px; font-size: 1.6rem; }
-  p { margin: 0 0 24px; max-width: 62ch; color: #4b5668; }
-  .panel { display: flex; align-items: center; justify-content: center; padding: clamp(24px, 6vw, 64px); border-radius: 16px; margin-bottom: 20px; }
-  .panel img { width: 100%; max-width: 760px; height: auto; display: block; }
+  html, body { height: 100%; }
+  body { margin: 0; display: flex; flex-direction: column; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; background: #0e1624; color: #f4f7fa; }
+
+  nav { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; padding: 14px 20px; background: #16233a; }
+  nav .title { margin-right: auto; font-size: 1.1rem; font-weight: 600; }
+  nav a { display: inline-block; min-width: 120px; padding: 14px 28px; border-radius: 12px; text-align: center; text-decoration: none; font-size: 1.25rem; font-weight: 600; color: #f4f7fa; background: #22324d; border: 3px solid transparent; }
+  nav a[aria-current="page"] { background: #f4f7fa; color: #101828; }
+  nav a:focus-visible, nav a:hover { outline: none; border-color: #3dd6c6; }
+
+  main { flex: 1 1 auto; display: flex; min-height: 0; }
+  .view { flex: 1 1 0; display: none; }
+  .view.on { display: flex; }
+  .view.stack { flex-direction: column; }
+  .pane { flex: 1 1 0; display: flex; align-items: center; justify-content: center; padding: clamp(16px, 4vw, 56px); min-height: 0; }
+  .pane img { width: 100%; max-width: 1100px; max-height: 100%; height: auto; display: block; }
   .light { background: #f4f7fa; }
   .dark { background: #0e1624; }
-  .label { margin: 0 0 8px; font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: #4b5668; }
-  ul { margin: 0; padding: 0; list-style: none; display: flex; gap: 20px; flex-wrap: wrap; }
-  a { color: #0b6f66; }
-  footer { margin-top: 32px; font-size: .85rem; color: #4b5668; }
+  .tag { position: absolute; top: 0; left: 0; margin: 12px 16px; font-size: .85rem; letter-spacing: .08em; text-transform: uppercase; }
+  .light .tag { color: #4b5668; }
+  .dark .tag { color: #9aa7bb; }
+  .pane { position: relative; }
+
+  .links { padding: 12px 20px; font-size: .95rem; background: #16233a; }
+  .links a { color: #7fe7db; margin-right: 20px; }
+  noscript .pane { display: flex; }
 </style>
 </head>
 <body>
+
+<nav aria-label="Logo versions">
+  <span class="title">eyeBrowser logo</span>
+  <a href="#both" data-view="both">Both</a>
+  <a href="#light" data-view="light">Light</a>
+  <a href="#dark" data-view="dark">Dark</a>
+</nav>
+
 <main>
-  <h1>eyeBrowser</h1>
-  <p>A web browser for Android TV. The logo below is a tentative design: a squinting left eye, a raised right brow and a mirrored "y".</p>
-
-  <p class="label">On light</p>
-  <div class="panel light"><img src="assets/logo-light.svg" alt="eyeBrowser logo on a light background"></div>
-
-  <p class="label">On dark</p>
-  <div class="panel dark"><img src="assets/logo-dark.svg" alt="eyeBrowser logo on a dark background"></div>
-
-  <ul>
-    <li><a href="assets/logo-light.svg" download>Download SVG, light backgrounds</a></li>
-    <li><a href="assets/logo-dark.svg" download>Download SVG, dark backgrounds</a></li>
-  </ul>
-
-  <footer>Letterforms are outlined from Fredoka (SIL Open Font License).</footer>
+  <section id="view-both" class="view stack on" aria-label="Both versions">
+    <div class="pane light"><span class="tag">Light</span><img src="assets/logo-light.svg" alt="eyeBrowser logo for light backgrounds"></div>
+    <div class="pane dark"><span class="tag">Dark</span><img src="assets/logo-dark.svg" alt="eyeBrowser logo for dark backgrounds"></div>
+  </section>
+  <section id="view-light" class="view" aria-label="Light version">
+    <div class="pane light"><img src="assets/logo-light.svg" alt="eyeBrowser logo for light backgrounds"></div>
+  </section>
+  <section id="view-dark" class="view" aria-label="Dark version">
+    <div class="pane dark"><img src="assets/logo-dark.svg" alt="eyeBrowser logo for dark backgrounds"></div>
+  </section>
 </main>
+
+<div class="links">
+  <a href="assets/logo-light.svg" download>Download light SVG</a>
+  <a href="assets/logo-dark.svg" download>Download dark SVG</a>
+</div>
+
+<script>
+(function () {
+  var order = ['both', 'light', 'dark'];
+  var links = Array.prototype.slice.call(document.querySelectorAll('nav a'));
+  function current() {
+    var h = (location.hash || '#both').slice(1);
+    return order.indexOf(h) === -1 ? 'both' : h;
+  }
+  function render() {
+    var v = current();
+    order.forEach(function (name) {
+      document.getElementById('view-' + name).classList.toggle('on', name === v);
+    });
+    links.forEach(function (a) {
+      if (a.getAttribute('data-view') === v) a.setAttribute('aria-current', 'page');
+      else a.removeAttribute('aria-current');
+    });
+  }
+  window.addEventListener('hashchange', render);
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+    var i = order.indexOf(current()) + (e.key === 'ArrowRight' ? 1 : -1);
+    i = (i + order.length) % order.length;
+    location.hash = order[i];
+  });
+  render();
+})();
+</script>
 </body>
 </html>
