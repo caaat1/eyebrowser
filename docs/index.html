@@ -24,8 +24,8 @@
   .pane svg { width: 100%; max-width: 1100px; max-height: 100%; height: auto; display: block; }
   .yflip { cursor: pointer; }
   .yflip rect { transition: fill .2s ease; }
-  .light .yflip:hover rect, .light .yflip:focus rect { fill: rgba(11, 143, 131, .16); }
-  .dark .yflip:hover rect, .dark .yflip:focus rect { fill: rgba(61, 214, 198, .18); }
+  .light .yflip:hover rect, .light .yflip:focus rect, .light .yflip.hot rect { fill: rgba(11, 143, 131, .16); }
+  .dark .yflip:hover rect, .dark .yflip:focus rect, .dark .yflip.hot rect { fill: rgba(61, 214, 198, .18); }
   .yflip:focus { outline: none; }
   .yflip:focus-visible { outline: 4px solid #3dd6c6; outline-offset: 6px; }
   .yflip .flip { transform: scaleX(-1); transform-origin: 0 0; transition: transform .35s ease; }
@@ -67,6 +67,7 @@
 
 <div class="links">
   <span style="margin-right:20px">Tip: click the y, or focus it and press Enter, to flip it.</span>
+  <span style="margin-right:20px;opacity:.7">page v4</span>
   <a href="assets/logo-light.svg" download>Download light SVG</a>
   <a href="assets/logo-dark.svg" download>Download dark SVG</a>
 </div>
@@ -97,7 +98,17 @@
       y.setAttribute('aria-pressed', normal ? 'false' : 'true');
     });
   }
+  function setHot(y, on) {
+    var c = (y.getAttribute('class') || '').replace(/\s*\bhot\b/g, '');
+    y.setAttribute('class', on ? c + ' hot' : c);
+    var r = y.getElementsByTagName('rect')[0];
+    var light = false, n = y;
+    while (n && n.nodeType === 1) { if ((n.getAttribute('class') || '').indexOf('light') !== -1) { light = true; break; } n = n.parentNode; }
+    if (r) r.setAttribute('fill', on ? (light ? 'rgba(11,143,131,0.16)' : 'rgba(61,214,198,0.18)') : 'transparent');
+  }
   ys.forEach(function (y) {
+    ['mouseenter', 'mouseover', 'focus', 'touchstart'].forEach(function (t) { y.addEventListener(t, function () { setHot(y, true); }); });
+    ['mouseleave', 'mouseout', 'blur', 'touchend'].forEach(function (t) { y.addEventListener(t, function () { setHot(y, false); }); });
     y.addEventListener('click', toggleY);
     y.addEventListener('keydown', function (e) {
       if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleY(); }
