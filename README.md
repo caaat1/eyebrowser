@@ -21,6 +21,10 @@ Existing Android TV browsers disappoint in several ways: hard-to-handle cursors,
 - Back key and colour keys wired as shortcuts
 - Minimal address bar and start page
 
+## Logo
+
+A tentative logo lives in `docs/assets/` as outlined SVGs (`logo-light.svg` for light backgrounds, `logo-dark.svg` for dark ones). The page in `docs/index.html` renders them and is meant to be served with GitHub Pages from the `/docs` folder. The letterforms are outlined from Fredoka (SIL Open Font License).
+
 ## Status
 
 Idea and logo exploration. No code yet.
